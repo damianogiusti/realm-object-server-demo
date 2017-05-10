@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">RealmObjectServer Demo</string>
+    <string name="username">username</string>
+    <string name="password">password</string>
+    <string name="login">Login</string>
+    <string name="logout">Logout</string>
+    <string name="add_new_realm">Add new realm</string>
+    <string name="realm_name">Realm name</string>
+    <string name="save">Save</string>
+</resources>

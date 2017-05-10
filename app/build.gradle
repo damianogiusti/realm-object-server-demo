@@ -1,0 +1,85 @@
+apply plugin: 'com.android.application'
+
+buildscript {
+    repositories {
+        jcenter()
+        mavenCentral()
+    }
+    dependencies {
+        classpath "me.tatarka:gradle-retrolambda:$retrolambdaVersion"
+        classpath "com.neenbedankt.gradle.plugins:android-apt:$aptVersion"
+    }
+}
+
+apply plugin: "com.neenbedankt.android-apt"
+apply plugin: "me.tatarka.retrolambda"
+apply plugin: 'realm-android'
+
+retrolambda {
+    javaVersion JavaVersion.VERSION_1_7
+}
+
+realm {
+    syncEnabled = true;
+}
+
+android {
+    compileSdkVersion 25
+    buildToolsVersion "25.0.2"
+    defaultConfig {
+        applicationId "com.damianogiusti.realmobjectserverdemo"
+        minSdkVersion 16
+        targetSdkVersion 25
+        versionCode 1
+        versionName "1.0"
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+    }
+    buildTypes {
+        def host = InetAddress.getLocalHost().getCanonicalHostName()
+        debug {
+            // This will automatically detect the IP address of the machine building RealmTasks.
+            // It is assumed that this machine is also running the Object Server.
+            // If not, replace 'host' with the IP of the machine hosting the server.
+            buildConfigField "String", "OBJECT_SERVER_IP", "\"${host}\""
+        }
+        emulator {
+            signingConfig signingConfigs.debug
+
+            buildConfigField "String", "OBJECT_SERVER_IP", "\"10.0.2.2\""
+        }
+        release {
+            shrinkResources true
+            minifyEnabled true
+            buildConfigField "String", "OBJECT_SERVER_IP", "\"${host}\""
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+}
+
+dependencies {
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+    androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
+        exclude group: 'com.android.support', module: 'support-annotations'
+    })
+    testCompile 'junit:junit:4.12'
+    compile 'com.android.support:appcompat-v7:25.3.1'
+
+    compile "com.android.support:recyclerview-v7:25.3.1"
+    compile "com.google.dagger:dagger:$daggerVersion"
+    apt "com.google.dagger:dagger-compiler:$daggerCompilerVersion"
+
+    compile "io.reactivex:rxjava:$rxJavaVersion"
+    compile "io.reactivex:rxandroid:$rxAndroidVersion"
+
+    compile "com.squareup.okhttp3:okhttp:$okHttpVersion"
+
+    compile "com.google.code.gson:gson:$gsonVersion"
+    compile "com.jakewharton:butterknife:$butterknifeVersion"
+    apt "com.jakewharton:butterknife-compiler:$butterknifeVersion"
+    compile "com.jakewharton.timber:timber:$timberVersion"
+}
